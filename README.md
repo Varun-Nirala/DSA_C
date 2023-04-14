@@ -1,2 +1,2 @@
 # DSA_C
-Data structure, algorithms and thread in C Programming
+Data structure, algorithms and threads in C Programming
