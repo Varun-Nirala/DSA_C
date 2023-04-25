@@ -1,77 +1,83 @@
 #ifndef __C_STACK_H__
 #define __C_STACK_H__
 
-#include <iostream>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-namespace nsC_DS { namespace nsC_Stack {
-
-constexpr int kDEFAULT_CAP = 10;
-template<typename T>
-struct Stack
+typedef struct Stack
 {
-	T		*m_arr{};
-	int		m_top{-1};
-	int		m_capacity{ kDEFAULT_CAP };
+	void	**m_pArr;
+	int		m_top;
+	int		m_capacity;
+}Stack;
 
-	Stack(int cap)
+Stack* createStack(int capacity)
+{
+	Stack *pStack = (Stack*)malloc(sizeof(Stack));
+	if (pStack)
 	{
-		if (cap > m_capacity)
-		{
-			m_capacity = cap;
-		}
-		m_arr = new T[m_capacity];
-	}
-};
+		pStack->m_pArr = (void**)malloc(sizeof(void*) * capacity);
 
-template<typename T>
-int size(Stack<T> &stack)
-{
-	return stack.m_top + 1;
+		pStack->m_capacity = capacity;
+		pStack->m_top = -1;
+	}
+	return pStack;
 }
 
-template<typename T>
-bool push(Stack<T> &stack, T value)
+int stackSize(Stack* pStack)
 {
-	if (stack.m_top < stack.m_capacity - 1)
+	return pStack ? pStack->m_top + 1 : 0;
+}
+
+bool pushStack(Stack *pStack, void *pValue)
+{
+	if (pStack && pStack->m_top < pStack->m_capacity - 1)
 	{
-		int index = ++stack.m_top;
-		stack.m_arr[index] = value;
+		int index = ++(pStack->m_top);
+		pStack->m_pArr[index] = pValue;
 		return true;
 	}
 	else
 	{
-		std::cout << "Stack is FULL." << std::endl;
+		printf("Stack is full.\n");
 		return false;
 	}
 }
 
-template<typename T>
-bool top(Stack<T> &stack, T &value)
+bool topStack(Stack *pStack, void **pValue)
 {
-	if (stack.m_top >= 0)
+	if (pStack && pStack->m_top >= 0)
 	{
-		value = stack.m_arr[stack.m_top];
+		*pValue = pStack->m_pArr[pStack->m_top];
 		return true;
 	}
 	else
 	{
-		std::cout << "Stack is EMPTY." << std::endl;
+		printf("Stack is empty.\n");
 		return false;
 	}
 }
 
-template<typename T>
-void pop(Stack<T> &stack)
+void popStack(Stack *pStack)
 {
-	if (stack.m_top >= 0)
+	if (pStack->m_top >= 0)
 	{
-		stack.m_top--;
+		(pStack->m_top)--;
 	}
 	else
 	{
-		std::cout << "Stack is EMPTY." << std::endl;
+		printf("Stack is empty.\n");
 	}
 }
 
-}}
+void deleteStack(Stack** pStack)
+{
+	if (pStack && *pStack)
+	{
+		free((*pStack)->m_pArr);
+		free((*pStack));
+		(*pStack) = NULL;
+	}
+}
 #endif // __C_STACK_H__

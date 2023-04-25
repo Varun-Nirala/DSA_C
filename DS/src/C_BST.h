@@ -16,7 +16,7 @@
 										size_t							m_count;	\
 										struct STRUCT_NAME(dataType)	*m_lt;		\
 										struct STRUCT_NAME(dataType)	*m_rt;		\
-									}STRUCT_NAME(dataType)
+									}STRUCT_NAME(dataType);
 
 #define CAST_PTR_AS(pointer, dataType)	((dataType *)(pointer))
 
@@ -27,8 +27,8 @@
 #define DECLARE_FUNC_findMin(dataType)			STRUCT_NAME(dataType)* findMin_##dataType(STRUCT_NAME(dataType) *root)
 #define DECLARE_FUNC_remove(dataType)			STRUCT_NAME(dataType)* remove_##dataType(STRUCT_NAME(dataType) **root, dataType data)
 
-//#define DECLARE_FUNC_preorder(dataType)			void preorder##dataType(STRUCT_NAME(dataType) *root)
-//#define DECLARE_FUNC_inorder(dataType)			void inorder##dataType(STRUCT_NAME(dataType) *root)
+//#define DECLARE_FUNC_preorder(dataType)		void preorder##dataType(STRUCT_NAME(dataType) *root)
+//#define DECLARE_FUNC_inorder(dataType)		void inorder##dataType(STRUCT_NAME(dataType) *root)
 //#define DECLARE_FUNC_postorder(dataType)		void postorder##dataType(STRUCT_NAME(dataType) *root)
 
 #define DECLARE_FUNC_preorderData(dataType)		void preorderData_##dataType(STRUCT_NAME(dataType) *root, STRUCT_NAME(dataType) **listNode)
@@ -208,7 +208,7 @@ DECLARE_FUNC_postorderData(dataType) {												\
 }
 
 #define INIT_BST(dataType)					\
-DECLARE_STRUCT(dataType);					\
+DECLARE_STRUCT(dataType)					\
 											\
 DEFINE_FUNC_createNode(dataType)			\
 											\

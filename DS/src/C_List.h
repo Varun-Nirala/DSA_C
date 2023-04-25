@@ -1,230 +1,223 @@
 #ifndef __C_LIST_H__
 #define __C_LIST_H__
 
-#include <vector>
-#include <iostream>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
-namespace nsC_DS { namespace nsC_List {
-template<typename T>
-struct Node
+typedef struct ListNode
 {
-	T		m_data{};
-	Node	*m_pNext{};
-	Node	*m_pPrev{};
+	void				*m_pData;
+	struct ListNode		*m_pNext;
+	struct ListNode		*m_pPrev;
+}ListNode;
 
-	Node(T value) :
-		m_data(value)
-	{}
-};
-
-template<typename T>
-struct List
+typedef struct List
 {
-	int			m_size{};
-	Node<T>		*m_pHead{};
-	Node<T>		*m_pTail{};
-};
+	int			m_size;
+	ListNode	*m_pHead;
+	ListNode	*m_pTail;
+}List;
 
-template<typename T>
-List<T>* createList()
+ListNode* createListNode(void *pData)
 {
-	return new List<T>();
-}
-
-template<typename T>
-int size(List<T> *list)
-{
-	return list ? list->m_size : 0;
-}
-
-template<typename T>
-void deleteList(List<T> *&list)
-{
-	if (list)
+	ListNode *pListNode = (ListNode*)malloc(sizeof(ListNode));
+	if (pListNode)
 	{
-		int size = list->m_size;
+		pListNode->m_pData = pData;
+		pListNode->m_pNext = pListNode->m_pPrev = NULL;
+	}
+	return pListNode;
+}
+
+List* createList()
+{
+	List* pList = (List*)malloc(sizeof(List));
+	if (pList)
+	{
+		pList->m_pHead = pList->m_pTail = NULL;
+		pList->m_size = 0;
+	}
+	return pList;
+}
+
+bool pushFrontList(List **pList, void *pValue)
+{
+	if (pList && *pList)
+	{
+		ListNode *pNode = createListNode(pValue);
+
+		if ((*pList)->m_size == 0)
+		{
+			(*pList)->m_pHead = (*pList)->m_pTail = pNode;
+		}
+		else
+		{
+			(*pList)->m_pHead->m_pPrev = pNode;
+			pNode->m_pNext = (*pList)->m_pHead;
+
+			(*pList)->m_pHead = pNode;
+		}
+		(*pList)->m_size++;
+		return (*pList)->m_size > 0;
+	}
+	printf("List is a nullptr.\n");
+	return false;
+}
+
+bool pushBackList(List **pList, void *pValue)
+{
+	if (pList && *pList)
+	{
+		ListNode* pNode = createListNode(pValue);
+
+		if ((*pList)->m_size == 0)
+		{
+			(*pList)->m_pHead = (*pList)->m_pTail = pNode;
+		}
+		else
+		{
+			(*pList)->m_pTail->m_pNext = pNode;
+			pNode->m_pPrev = (*pList)->m_pTail;
+
+			(*pList)->m_pTail = pNode;
+		}
+
+		(*pList)->m_size++;
+
+		return (*pList)->m_size > 0;
+	}
+	printf("List is a nullptr.\n");
+	return false;
+}
+
+bool popBackList(List **pList)
+{
+	if (pList && *pList && (*pList)->m_size > 0)
+	{
+		ListNode *pNode = (*pList)->m_pTail;
+		(*pList)->m_pTail = pNode->m_pPrev;
+		if ((*pList)->m_pTail)
+		{
+			(*pList)->m_pTail->m_pNext = NULL;
+		}
+
+		(*pList)->m_size--;
+		free(pNode);
+
+		return true;
+	}
+	printf("List is a nullptr.\n");
+	return false;
+}
+
+bool popFrontList(List **pList)
+{
+	if (pList && *pList && (*pList)->m_size > 1)
+	{
+		ListNode *pNode = (*pList)->m_pHead;
+		(*pList)->m_pHead = pNode->m_pNext;
+		if ((*pList)->m_pHead)
+		{
+			(*pList)->m_pHead->m_pPrev = NULL;
+		}
+
+		(*pList)->m_size--;
+		free(pNode);
+		return true;
+	}
+	printf("List is a nullptr.\n");
+	return false;
+}
+
+bool frontList(List **pList, void **pValue)
+{
+	if (pList == NULL || *pList == NULL)
+	{
+		printf("List is a nullptr.\n");
+	}
+	else if ((*pList)->m_size > 0)
+	{
+		*pValue = (*pList)->m_pHead->m_pData;
+		return true;
+	}
+	printf("List is empty.\n");
+	return false;
+}
+
+bool backList(List** pList, void** pValue)
+{
+	if (pList == NULL || *pList == NULL)
+	{
+		printf("List is a nullptr.\n");
+	}
+	else if ((*pList)->m_size > 0)
+	{
+		*pValue = (*pList)->m_pTail->m_pData;
+		return true;
+	}
+	printf("List is empty.\n");
+	return false;
+}
+
+void deleteList(List** pList)
+{
+	if (pList && *pList)
+	{
+		int size = (*pList)->m_size;
 		for (int i = 0; i < size; ++i)
 		{
-			popBack(list);
+			popBackList(pList);
 		}
-
-		delete list;
-		list = nullptr;
-		std::cout << "List is destroyed...\n";
+		free(*pList);
+		*pList = NULL;
+		printf("List is destroyed...\n");
 	}
 }
 
-template<typename T>
-bool pushFront(List<T> *list, T value)
+void printList(List *pList)
 {
-	if (list)
+	if (!pList)
 	{
-		Node<T> *node = new Node<T>(value);
-
-		if (list->m_size == 0)
-		{
-			list->m_pHead = list->m_pTail = node;
-		}
-		else
-		{
-			list->m_pHead->m_pPrev = node;
-			node->m_pNext = list->m_pHead;
-
-			list->m_pHead = node;
-		}
-		list->m_size++;
-		return list->m_size > 0;
+		printf("List is a nullptr.\n");
 	}
-	std::cout << "List is a nullptr.\n";
-	return false;
-}
-
-template<typename T>
-bool pushBack(List<T> *list, T value)
-{
-	if (list)
+	else if (pList && pList->m_size == 0)
 	{
-		Node<T> *node = new Node<T>(value);
-
-		if (list->m_size == 0)
-		{
-			list->m_pHead = list->m_pTail = node;
-		}
-		else
-		{
-			list->m_pTail->m_pNext = node;
-			node->m_pPrev = list->m_pTail;
-
-			list->m_pTail = node;
-		}
-
-		list->m_size++;
-
-		return list->m_size > 0;
-	}
-	std::cout << "List is a nullptr.\n";
-	return false;
-}
-
-template<typename T>
-bool popBack(List<T> *list)
-{
-	if (list && list->m_size > 0)
-	{
-		Node<T> *node = list->m_pTail;
-		list->m_pTail = node->m_pPrev;
-		if (list->m_pTail)
-		{
-			list->m_pTail->m_pNext = nullptr;
-		}
-
-		list->m_size--;
-		delete node;
-
-		return true;
-	}
-	std::cout << "List is a nullptr.\n";
-	return false;
-}
-
-template<typename T>
-bool popFront(List<T> *list)
-{
-	if (list && list->m_size > 1)
-	{
-		Node<T> *node = list->m_pHead;
-		list->m_pHead = node->m_pNext;
-		if (list->m_pHead)
-		{
-			list->m_pHead->m_pPrev = nullptr;
-		}
-
-		list->m_size--;
-		delete node;
-		return true;
-	}
-	std::cout << "List is a nullptr.\n";
-	return false;
-}
-
-template<typename T>
-bool front(List<T> *list, T &value)
-{
-	if (!list)
-	{
-		std::cout << "List is a nullptr.\n";
-	}
-	else if (list->m_size > 0)
-	{
-		value = list->m_pHead->m_data;
-		return true;
-	}
-	std::cout << "List is empty." << std::endl;
-	return false;
-}
-
-template<typename T>
-bool back(List<T> *list, T &value)
-{
-	if (!list)
-	{
-		std::cout << "List is a nullptr.\n";
-	}
-	else if (list->m_size > 0)
-	{
-		value = list->m_pTail->m_data;
-		return true;
-	}
-	std::cout << "List is empty.\n";
-	return false;
-}
-
-template<typename T>
-void traverse(List<T> *list)
-{
-	if (!list)
-	{
-		std::cout << "List is a nullptr.\n";
-	}
-	else if (list && list->m_size == 0)
-	{
-		std::cout << "List is empty.\n";
+		printf("List is empty.\n");
 	}
 	else
 	{
-		int size = list->m_size;
-		Node<T> *node = list->m_pHead;
-		std::cout << "List data is ..." << std::endl;
+		int size = pList->m_size;
+		ListNode *pNode = pList->m_pHead;
+		printf("List data is ...\n");
 		for (int i = 0; i < size; i++)
 		{
-			std::cout << "[" << i << "]" << " :: " << node->m_data << std::endl;
-			node = node->m_pNext;
+			printf("[%d] :: %p\n", i, pNode->m_pData);
+			pNode = pNode->m_pNext;
 		}
 	}
 }
 
-template<typename T>
-void traverse(List<T>* list, std::vector<T> &vec)
+void traverseList(List* pList, void **pVec, int* pSize)
 {
-	if (!list)
+	if (!pList)
 	{
-		std::cout << "List is a nullptr.\n";
+		printf("List is a nullptr.\n");
 	}
-	else if (list && list->m_size == 0)
+	else if (pList && pList->m_size == 0)
 	{
-		std::cout << "List is empty.\n";
+		printf("List is empty.\n");
 	}
 	else
 	{
-		int size = list->m_size;
-		vec.resize(size);
-		Node<T>* node = list->m_pHead;
-		for (int i = 0; i < size; i++)
+		*pSize = pList->m_size;
+		(*pVec) = (void *)malloc(sizeof(void*) * (*pSize));
+		ListNode *pNode = pList->m_pHead;
+		for (int i = 0; i < (*pSize); i++)
 		{
-			vec[i] = node->m_data;
-			node = node->m_pNext;
+			pVec[i] = pNode->m_pData;
+			pNode = pNode->m_pNext;
 		}
 	}
 }
-}}
 #endif// __C_LIST_H__

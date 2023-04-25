@@ -1,5 +1,5 @@
 //#include "C_GenericKeyword.h"
-//#include "C_tester.h"
+#include "C_tester.h"
 #include "C_BST.h"
 
 //#include "temp.h"
