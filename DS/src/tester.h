@@ -1,9 +1,9 @@
 #ifndef __C_TESTER_H__
 #define __C_TESTER_H__
 
-#include "C_Stack.h"
-#include "C_List.h"
-#include "C_BST.h"
+#include "stack.h"
+#include "list.h"
+#include "bst.h"
 
 void print(const char *msg, bool pass)
 {
@@ -132,18 +132,54 @@ void test_C_List(const char *msg)
 	print("List delete test.\n\n", pList->m_size == 0 && pList == NULL);
 }
 
+INIT_BST(int);
+
 void test_C_BST(const char* msg)
 {
 	printf(msg);
 
-	INIT_BST(int);
+	//int arr[] = { 15, 10, 20, 8, 12, 18, 25, 19, 30, 15, 10, 20, 8, 12, 18, 25, 19, 30 };
+	//int arrSize = sizeof(arr) / sizeof(arr[0]);
+	//bool ret = true;
 
-	BstNode_int *pRoot = NULL;
+	BstNode_int* m_root = NULL;
+	insertIterative_int(&m_root, 1);
+	insertRecursive_int(&m_root, 2);
 
-	int arr[] = { 15, 10, 20, 8, 12, 18, 25, 19, 30, 15, 10, 20, 8, 12, 18, 25, 19, 30 };
-	int arrSize = sizeof(arr) / sizeof(arr[0]);
+	int val = 1;
+	printf("Searching for %d : ", val);
+	if (search_int(m_root, val))
+	{
+		printf("Found\n");
+	}
+	else
+	{
+		printf("Not Found\n");
+	}
 
-	bool ret = true;
+	val = 5;
+	printf("Searching for %d : ", val);
+	if (search_int(m_root, val))
+	{
+		printf("Found\n");
+	}
+	else
+	{
+		printf("Not Found\n");
+	}
+
+	val = 2;
+	printf("Removing value %d\n", val);
+	remove_int(&m_root, 2);
+	printf("Searching for %d : ", val);
+	if (search_int(m_root, val))
+	{
+		printf("Found\n");
+	}
+	else
+	{
+		printf("Not Found\n");
+	}
 }
 
 #endif //__C_TESTER_H__
