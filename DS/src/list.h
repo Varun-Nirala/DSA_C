@@ -35,94 +35,70 @@ List* createList()
 	List* pList = (List*)malloc(sizeof(List));
 	if (pList)
 	{
-		pList->m_pHead = pList->m_pTail = NULL;
 		pList->m_size = 0;
+		pList->m_pHead = pList->m_pTail = NULL;
 	}
 	return pList;
 }
 
-bool pushFrontList(List **pList, void *pValue)
+bool pushFrontList(List *pList, void *pValue)
 {
-	if (pList && *pList)
+	if (pList)
 	{
 		ListNode *pNode = createListNode(pValue);
 
-		if ((*pList)->m_size == 0)
+		if (pList->m_size == 0)
 		{
-			(*pList)->m_pHead = (*pList)->m_pTail = pNode;
+			pList->m_pHead = pList->m_pTail = pNode;
 		}
 		else
 		{
-			(*pList)->m_pHead->m_pPrev = pNode;
-			pNode->m_pNext = (*pList)->m_pHead;
-
-			(*pList)->m_pHead = pNode;
+			pNode->m_pNext = pList->m_pHead;
+			pList->m_pHead->m_pPrev = pNode;
+			pList->m_pHead = pNode;
 		}
-		(*pList)->m_size++;
-		return (*pList)->m_size > 0;
+		pList->m_size++;
+		return pList->m_size > 0;
 	}
 	printf("List is a nullptr.\n");
 	return false;
 }
 
-bool pushBackList(List **pList, void *pValue)
+bool pushBackList(List *pList, void *pValue)
 {
-	if (pList && *pList)
+	if (pList)
 	{
 		ListNode* pNode = createListNode(pValue);
 
-		if ((*pList)->m_size == 0)
+		if (pList->m_size == 0)
 		{
-			(*pList)->m_pHead = (*pList)->m_pTail = pNode;
+			pList->m_pHead = pList->m_pTail = pNode;
 		}
 		else
 		{
-			(*pList)->m_pTail->m_pNext = pNode;
-			pNode->m_pPrev = (*pList)->m_pTail;
+			pNode->m_pPrev = pList->m_pTail;
+			pList->m_pTail->m_pNext = pNode;
 
-			(*pList)->m_pTail = pNode;
+			pList->m_pTail = pNode;
 		}
-
-		(*pList)->m_size++;
-
-		return (*pList)->m_size > 0;
+		pList->m_size++;
+		return pList->m_size > 0;
 	}
 	printf("List is a nullptr.\n");
 	return false;
 }
 
-bool popBackList(List **pList)
+bool popBackList(List *pList)
 {
-	if (pList && *pList && (*pList)->m_size > 0)
+	if (pList && pList->m_size > 0)
 	{
-		ListNode *pNode = (*pList)->m_pTail;
-		(*pList)->m_pTail = pNode->m_pPrev;
-		if ((*pList)->m_pTail)
+		ListNode *pNode = pList->m_pTail;
+		pList->m_pTail = pNode->m_pPrev;
+		if (pList->m_pTail)
 		{
-			(*pList)->m_pTail->m_pNext = NULL;
+			pList->m_pTail->m_pNext = NULL;
 		}
-
-		(*pList)->m_size--;
-		free(pNode);
-
-		return true;
-	}
-	printf("List is a nullptr.\n");
-	return false;
-}
-
-bool popFrontList(List **pList)
-{
-	if (pList && *pList && (*pList)->m_size > 1)
-	{
-		ListNode *pNode = (*pList)->m_pHead;
-		(*pList)->m_pHead = pNode->m_pNext;
-		if ((*pList)->m_pHead)
-		{
-			(*pList)->m_pHead->m_pPrev = NULL;
-		}
-
-		(*pList)->m_size--;
+		pList->m_size--;
 		free(pNode);
 		return true;
 	}
@@ -130,30 +106,50 @@ bool popFrontList(List **pList)
 	return false;
 }
 
-bool frontList(List **pList, void **pValue)
+bool popFrontList(List *pList)
 {
-	if (pList == NULL || *pList == NULL)
+	if (pList && pList->m_size > 0)
+	{
+		ListNode *pNode = pList->m_pHead;
+		pList->m_pHead = pNode->m_pNext;
+
+		if (pList->m_pHead)
+		{
+			pList->m_pHead->m_pPrev = NULL;
+		}
+
+		pList->m_size--;
+		free(pNode);
+		return true;
+	}
+	printf("List is a nullptr.\n");
+	return false;
+}
+
+bool frontList(List *pList, void **pValue)
+{
+	if (!pList)
 	{
 		printf("List is a nullptr.\n");
 	}
-	else if ((*pList)->m_size > 0)
+	else if (pList->m_size > 0)
 	{
-		*pValue = (*pList)->m_pHead->m_pData;
+		*pValue = pList->m_pHead->m_pData;
 		return true;
 	}
 	printf("List is empty.\n");
 	return false;
 }
 
-bool backList(List** pList, void** pValue)
+bool backList(List* pList, void** pValue)
 {
-	if (pList == NULL || *pList == NULL)
+	if (!pList)
 	{
 		printf("List is a nullptr.\n");
 	}
-	else if ((*pList)->m_size > 0)
+	else if (pList->m_size > 0)
 	{
-		*pValue = (*pList)->m_pTail->m_pData;
+		*pValue = pList->m_pTail->m_pData;
 		return true;
 	}
 	printf("List is empty.\n");
@@ -167,7 +163,7 @@ void deleteList(List** pList)
 		int size = (*pList)->m_size;
 		for (int i = 0; i < size; ++i)
 		{
-			popBackList(pList);
+			popBackList(*pList);
 		}
 		free(*pList);
 		*pList = NULL;
@@ -198,7 +194,7 @@ void printList(List *pList)
 	}
 }
 
-void traverseList(List* pList, void **pVec, int* pSize)
+void traverseList(List* pList, void ***pVec, int* pSize)
 {
 	if (!pList)
 	{
@@ -211,11 +207,11 @@ void traverseList(List* pList, void **pVec, int* pSize)
 	else
 	{
 		*pSize = pList->m_size;
-		(*pVec) = (void *)malloc(sizeof(void*) * (*pSize));
+		(*pVec) = (void **)malloc(sizeof(void**) * (*pSize));
 		ListNode *pNode = pList->m_pHead;
 		for (int i = 0; i < (*pSize); i++)
 		{
-			pVec[i] = pNode->m_pData;
+			(*pVec)[i] = pNode->m_pData;
 			pNode = pNode->m_pNext;
 		}
 	}

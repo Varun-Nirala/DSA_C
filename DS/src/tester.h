@@ -20,6 +20,7 @@ void print(const char *msg, bool pass)
 void test_C_Stack(const char *msg)
 {
 	printf(msg);
+
 	const int maxSize = 9;
 	Stack *pStack = createStack(maxSize);
 
@@ -33,17 +34,17 @@ void test_C_Stack(const char *msg)
 
 	for (int i = 0; i < maxSize; i++)
 	{
-		int* pVal = (int *)malloc(sizeof(int *));
-		*pVal = arr[i];
-		pushStack(pStack, pVal);
+		pushStack(pStack, (void *)&arr[i]);
+		int* pValue = NULL;
+		topStack(pStack, &pValue);
+		assert(*pValue == arr[i]);
 	}
 
 	print("Stack size test.", stackSize(pStack) == maxSize);
 
-	int *pValue = (int *)malloc(sizeof(int *));
 	for (int i = maxSize - 1; i >= 0; --i)
 	{
-		
+		int* pValue = NULL;
 		if (!topStack(pStack, &pValue) || *pValue != arr[i])
 		{
 			ret = false;
@@ -51,8 +52,6 @@ void test_C_Stack(const char *msg)
 		}
 		popStack(pStack);
 	}
-	free(pValue);
-	pValue = NULL;
 	print("Stack after all pop, size test.", stackSize(pStack) == 0);
 	print("Stack final test.\n\n", ret);
 
@@ -71,13 +70,11 @@ void test_C_List(const char *msg)
 	print("List empty test.", pList->m_size == 0);
 	for (int i = 0; i < arrSize; i++)
 	{
-		int* pVal = (int*)malloc(sizeof(int*));
-		*pVal = arr[i];
-		pushFrontList(&pList, pVal);
+		pushFrontList(pList, &arr[i]);
 	}
 	print("List size test.", (pList->m_size == arrSize));
 
-	int* pArr = NULL;
+	int **pArr = NULL;
 	int size = 0;
 	traverseList(pList, &pArr, &size);
 
@@ -85,7 +82,7 @@ void test_C_List(const char *msg)
 
 	for (int i = arrSize - 1, j = 0; i >= 0; --i, ++j)
 	{
-		if (pArr[i] != arr[j])
+		if (*pArr[i] != arr[j])
 		{
 			ret = false;
 			break;
@@ -98,15 +95,13 @@ void test_C_List(const char *msg)
 	
 	print("List pushFront test.", ret);
 	deleteList(&pList);
-	print("List delete test.", pList->m_size == 0 && pList == NULL);
+	print("List delete test.", pList == NULL);
 
 	pList = createList();
 
 	for (int i = 0; i < arrSize; i++)
 	{
-		int* pVal = (int *)malloc(sizeof(int *));
-		*pVal = arr[i];
-		pushBackList(&pList, pVal);
+		pushBackList(pList, &arr[i]);
 	}
 	print("List size test.", pList->m_size == arrSize);
 
@@ -116,7 +111,7 @@ void test_C_List(const char *msg)
 
 	for (int i = 0; i < arrSize; ++i)
 	{
-		if (pArr[i] != arr[i])
+		if (*pArr[i] != arr[i])
 		{
 			ret = false;
 			break;
@@ -129,7 +124,7 @@ void test_C_List(const char *msg)
 
 	print("List pushBack test.", ret);
 	deleteList(&pList);
-	print("List delete test.\n\n", pList->m_size == 0 && pList == NULL);
+	print("List delete test.\n\n", pList == NULL);
 }
 
 INIT_BST(int);

@@ -59,8 +59,9 @@ void test_typename()
     ai[i] = (int)(s + p);  // For warnings
 }
 
-void test_C_GenericKeyword()
+void test_C_GenericKeyword(const char* msg)
 {
+    printf(msg);
     double x = 8.0;
     const float y = 3.375;
     printf("cbrt(8.0) = %f\n", cbrt(x)); // selects the default cbrt

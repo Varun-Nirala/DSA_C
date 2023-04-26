@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct Stack
 {
@@ -17,8 +18,8 @@ Stack* createStack(int capacity)
 	Stack *pStack = (Stack*)malloc(sizeof(Stack));
 	if (pStack)
 	{
-		pStack->m_pArr = (void**)malloc(sizeof(void*) * capacity);
-
+		pStack->m_pArr = malloc(sizeof(void*) * capacity);
+		memset(pStack->m_pArr, sizeof(void*) * capacity, 0);
 		pStack->m_capacity = capacity;
 		pStack->m_top = -1;
 	}
