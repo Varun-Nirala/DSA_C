@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         }
     }
  
-    pthread_attr_destroy(&Attr);    // Clean up code
+    pthread_attr_destroy(&attr);    // Clean up code
     
     printf("All thread created\n");
     s_ThreadArg *argArray[NUM_THREAD];
